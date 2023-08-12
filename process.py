@@ -34,20 +34,19 @@ def processAllFiles():
   return tests
 
 #create a dataframe for each device-algorithm with rows: languagens, columns: tempo, memoria media, energia media
-def createDataFrame(tests, device, algorithm):
-  data = []
+def createDataFrame(tests, device, algorithm, simple=True):
   attrs = ['totalTime', 'meanMemory', 'totalEnergy']
+  if not simple: attrs.append('ratioJoulesPerMs')
+
+  data = []
   for lang in consts.languages:
     curSet = tests[f'{device}-{lang}-{algorithm}']
     
-    # data.append([x for attr in attrs for x in [curSet.getMeanFrom(attr), curSet.getStdFrom(attr)]])
-    data.append([curSet.getMeanFrom('totalTime'), curSet.getCVFrom('totalTime'),
-              curSet.getMeanFrom('meanMemory'), curSet.getCVFrom('meanMemory'),
-              curSet.getMeanFrom('totalEnergy'), curSet.getCVFrom('totalEnergy'),
-              curSet.getMeanFrom('ratioJoulesPerMs'), curSet.getCVFrom('ratioJoulesPerMs')])
+    if simple: data.append([curSet.getMeanFrom(attr) for attr in attrs])
+    else: data.append([x for attr in attrs for x in [curSet.getMeanFrom(attr), curSet.getStdFrom(attr)]])
 
   row_names = consts.languages
-  col_names = ['time', 'time-cv', 'memory', 'memory-cv', 'energy', 'energy-cv', 'ratio', 'ratio-cv']
+  col_names = ['time', 'memory', 'energy'] if simple else ['time', 'time-cv', 'memory', 'memory-cv', 'energy', 'energy-cv', 'ratio', 'ratio-cv']
 
   return pd.DataFrame(data, index=row_names, columns=col_names)
 
@@ -55,7 +54,7 @@ def createDataFrame(tests, device, algorithm):
 tests = processAllFiles()
 
 pd.set_option('display.max_columns', None)
-pd.set_option('display.width', 60)
+pd.set_option('display.width', 100)
 for dev in consts.devices:
   for alg in consts.algorithms:
     df = createDataFrame(tests, dev, alg)
