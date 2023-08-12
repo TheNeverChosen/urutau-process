@@ -43,7 +43,7 @@ def createDataFrame(tests, device, algorithm, simple=True):
     curSet = tests[f'{device}-{lang}-{algorithm}']
     
     if simple: data.append([curSet.getMeanFrom(attr) for attr in attrs])
-    else: data.append([x for attr in attrs for x in [curSet.getMeanFrom(attr), curSet.getStdFrom(attr)]])
+    else: data.append([x for attr in attrs for x in [curSet.getMeanFrom(attr), curSet.getCVFrom(attr)]])
 
   row_names = consts.languages
   col_names = ['time', 'memory', 'energy'] if simple else ['time', 'time-cv', 'memory', 'memory-cv', 'energy', 'energy-cv', 'ratio', 'ratio-cv']
