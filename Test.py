@@ -19,7 +19,7 @@ class TestSet:
     self.tests.append(test)
   
   def getMeanFrom(self, attr):
-    return np.mean([getattr(test, attr) for test in self.tests])
+    return round(np.mean([getattr(test, attr) for test in self.tests]),2)
   
   def getStdFrom(self, attr):
     return np.std([getattr(test, attr) for test in self.tests])
